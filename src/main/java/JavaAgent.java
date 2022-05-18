@@ -3,8 +3,11 @@ import java.util.logging.Logger;
 
 
 import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.annotation.AnnotationDescription.Builder;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.*;
@@ -23,59 +26,23 @@ public class JavaAgent {
     public static void premain(String agentArgs, Instrumentation instrumentation) throws InstantiationException {
 
         log.info("Starting Java Agent......");
-        //InterceptingClassTransformer interceptingClassTransformer = new InterceptingClassTransformer();
         
-        //Class<?>[] cLasses = instrumentation.getAllLoadedClasses();
         System.out.println("redefinir classes " + instrumentation.isRedefineClassesSupported());
         System.out.println("retransform classes " + instrumentation.isRetransformClassesSupported());
         
+        TraceArgsInterceptor interceptor = new TraceArgsInterceptor();
         
-      //  AgentBuilder agentBuilder = createAgentBuilder(instrumentation);
-      //  agentBuilder.installOn(instrumentation);
+        AgentBuilder agentBuilder = new AgentBuilder.Default();
         
-      /*  for (Class<?> cls : cLasses) {
-            System.out.println("PreMainAgent get loaded class:" + cls.getName());
-        }
-        */
-        /*
-        interceptingClassTransformer.init();
-        instrumentation.addTransformer(interceptingClassTransformer);*/
-        /*
-        new AgentBuilder.Default()
-        .type(ElementMatchers.nameStartsWith("org.example"))
-        .transform((builder, typeDescription, classLoader, module) -> builder
-                .method(ElementMatchers.any())
-                .intercept(Advice.to(MyAdvice.class))
-        ).installOn(instrumentation);*/
-        
-        new AgentBuilder.Default()
-        .with(new AgentBuilder.InitializationStrategy.SelfInjection.Eager())
-        .type((ElementMatchers.any()))
-        .transform((builder, typeDescription, classLoader, module) -> builder
-                .method(ElementMatchers.any())
-                .intercept(Advice.to(MyAdvice.class))
-        ).installOn(instrumentation);
-        
+        agentBuilder.
+        	type(ElementMatchers.any())
+        	.transform((builder, type, classLoader, module) -> builder.method(ElementMatchers.any()).intercept(MethodDelegation.to(interceptor)))
+            .installOn(instrumentation);
+     
     }
     
     
-   /* private static AgentBuilder createAgentBuilder(Instrumentation instrumentation) {
-    	/*return new AgentBuilder.Default()
-    			.type(ElementMatchers.nameStartsWith("org.example"))
-    			.tra
-    			.transform((builder, typeDescription, classLoader) -> { 
-    				System.out.println("teesefsdf " + typeDescription);
-    				return builder.visit(Advice.to(MyAdvice.class).on(ElementMatchers.any()));
-    			});
-    	
-    	return new AgentBuilder.Default()
-        .with(new AgentBuilder.InitializationStrategy.SelfInjection.Eager())
-        .type((ElementMatchers.any()))
-        .transform((builder, typeDescription, classLoader, module) -> builder
-                .method(ElementMatchers.any())
-                .intercept(Advice.to(MyAdvice.class))
-        ).installOn(instrumentation);
-    	*/
+
     }
     	
 
