@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -60,6 +63,7 @@ public class mainWindowController extends Application implements Initializable {
     @FXML private Label errorLabel;
     @FXML private Label fileLabel;
     @FXML private Label btnEjecutar;
+    @FXML private ScrollPane txtOutput;
     
     
     //private Analityc analityc = new Analityc();
@@ -122,6 +126,30 @@ public class mainWindowController extends Application implements Initializable {
                     Level.SEVERE, null, ex
                 );
         }*/
+
+		StringBuffer sb = new StringBuffer();
+		try {
+	        ProcessBuilder builder = new ProcessBuilder();
+	        builder.redirectErrorStream(true);
+	        Process p = builder.start();
+	        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+	        String line;
+	        
+	        while (true) {
+	            line = r.readLine();
+	            if (line == null) { break; }
+	            sb.append(line);
+	        }
+			}
+		catch(Exception ex) {
+			
+		}
+		
+		System.out.println(sb.toString());
+		TextArea textArea = new TextArea();
+		textArea.setText(sb.toString());
+		txtOutput.setContent(textArea);
+		
     }
     
     @Override
@@ -208,7 +236,8 @@ public class mainWindowController extends Application implements Initializable {
 		    	 File file = fileChooser.showOpenDialog(pStage);
                  if (file != null) {
                 	 fileLabel.setText(file.toString());
-                     System.out.println(file.toString()); 
+                	 openFile(file);
+                     
                  }               
 		     }
 		});
