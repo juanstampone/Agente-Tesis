@@ -63,7 +63,7 @@ public class mainWindowController extends Application implements Initializable {
     @FXML private Label errorLabel;
     @FXML private Label fileLabel;
     @FXML private Label btnEjecutar;
-    @FXML private ScrollPane txtOutput;
+    @FXML private TextArea txtOutput;
     
     
     //private Analityc analityc = new Analityc();
@@ -117,19 +117,16 @@ public class mainWindowController extends Application implements Initializable {
 		System.out.println("Metodo por afuera");		
 	}
 	
-	private void openFile(File file) {
-        /*try {
-            //desktop.open(file);
-        } catch (IOException ex) {
-            Logger.getLogger(
-                FileChooser.class.getName()).log(
-                    Level.SEVERE, null, ex
-                );
-        }*/
+	private void executeJar() {
 
 		StringBuffer sb = new StringBuffer();
 		try {
-	        ProcessBuilder builder = new ProcessBuilder();
+			//java -javaagent:JavaAgent-1.0-SNAPSHOT-jar-with-dependencies.jar -jar Ejecutable.jar
+	        ProcessBuilder builder = new ProcessBuilder(
+	        		"java", 
+	        		"-javaagent:C:\\Users\\Joaco\\Desktop\\Tesis\\Agente-Tesis\\target\\JavaAgent-1.0-SNAPSHOT-jar-with-dependencies.jar", 
+	        		"-jar", 
+	        		"C:\\Users\\Joaco\\Desktop\\Tesis\\Agente-Tesis\\Ejecutable.jar");
 	        builder.redirectErrorStream(true);
 	        Process p = builder.start();
 	        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -138,7 +135,7 @@ public class mainWindowController extends Application implements Initializable {
 	        while (true) {
 	            line = r.readLine();
 	            if (line == null) { break; }
-	            sb.append(line);
+	            sb.append(line + System.lineSeparator());
 	        }
 			}
 		catch(Exception ex) {
@@ -146,48 +143,15 @@ public class mainWindowController extends Application implements Initializable {
 		}
 		
 		System.out.println(sb.toString());
-		TextArea textArea = new TextArea();
-		textArea.setText(sb.toString());
-		txtOutput.setContent(textArea);
+		txtOutput.setEditable(false);
+		txtOutput.setText(sb.toString());
 		
     }
     
     @Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
-        	
-    	// INICIALIZACION PROGRESS INDICATOR IMAGE
-    	//progressImg.setProgress(-1.0f);
-    	//progressImg.setVisible(false);
-    	
-    	// SETEO LISTVIEW LISTSMARTPHONES
-    	
-    	try {
-			//analityc.levantarBasedeDatos(listaDispositivos);
-    		int x = 3;
-		} catch (NumberFormatException e1) {
-			e1.printStackTrace();
-		}
-		//listSmartphones.setItems(listaDispositivos);
-		
-		//TEST CONEXION PARA INICIAR LA BUSQUEDA DE PRECIOS DE LOS SMARTPHONES
-		/*if (testConexion.hayConexion()) {
-			analityc.iniciarWebScrapNewPrice();
-		} else {
-			offlineFlag.setVisible(true);
-		}*/
-
-    	// BUSQUEDA POR NOMBRE MEDIANTE SEARCHINPUT
-		FilteredList<String> filteredData = new FilteredList<>(listaDispositivos, e -> true);
-		
-		
-		
-		
-		// SELECCION DISPOSITIVO DE LA LISTA
-		
-		
-		
-    	
+        	    	
     	// MOVIMIENTO DE VENTANA DESDE TOP WINDOWS
 		topWindow.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -204,9 +168,6 @@ public class mainWindowController extends Application implements Initializable {
                 pStage.setY(event.getScreenY() - yOffset);
             }
         });
-		
-
-
 		
 		// CERRAR VENTANA MEDIANTE BOTON CLOSE
 		btnClose.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -235,60 +196,38 @@ public class mainWindowController extends Application implements Initializable {
 		    	 
 		    	 File file = fileChooser.showOpenDialog(pStage);
                  if (file != null) {
-                	 fileLabel.setText(file.toString());
-                	 openFile(file);
-                     
+                	 fileLabel.setText(file.toString());                 
                  }               
+		     }
+		});
+		
+		btnUpload.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+		     @Override
+		     public void handle(MouseEvent event) {
+		    	 
+		    	 File file = fileChooser.showOpenDialog(pStage);
+                if (file != null) {
+               	 fileLabel.setText(file.toString());                 
+                }               
+		     }
+		});
+		
+		btnEjecutar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+		     @Override
+		     public void handle(MouseEvent event) {
+		    	 
+		    	 if (!fileLabel.getText().isEmpty()) {
+		    		 executeJar();
+		    	 }
+		    	 
+                             
 		     }
 		});
 		
 	}
 
-    
-    /*public Task createWorker() {
-    	return new Task() {
-
-			@Override
-			protected Object call() throws Exception {
-				if (imageSmartPhone.getImageURL(analityc.getHashSmartphones().get(listSmartphones.getSelectionModel().getSelectedItem())) != null) {
-					updateProgress(25, 100);
-					URL url = new URL(imageSmartPhone.getImageURL(analityc.getHashSmartphones().get(listSmartphones.getSelectionModel().getSelectedItem())));
-	            	updateProgress(50, 100);
-	        		Image image = new Image(url.toString());
-	        		updateProgress(75, 100);
-	                Image img = imgSearchSelect.getImage();
-	                if (img != null) {
-	                    double w = 0;
-	                    double h = 0;
-
-	                    double ratioX = imgSearchSelect.getFitWidth() / img.getWidth();
-	                    double ratioY = imgSearchSelect.getFitHeight() / img.getHeight();
-	                    
-	                    double reducCoeff = 0;
-	                    if(ratioX >= ratioY) {
-	                        reducCoeff = ratioY;
-	                    } else {
-	                        reducCoeff = ratioX;
-	                    }
-
-	                    w = img.getWidth() * reducCoeff;
-	                    h = img.getHeight() * reducCoeff;
-
-	                    imgSearchSelect.setX((imgSearchSelect.getFitWidth() - w) / 2);
-	                    imgSearchSelect.setY((imgSearchSelect.getFitHeight() - h) / 2);
-	                }
-	            	updateProgress(100, 100);
-	            	progressImg.setVisible(false);
-	            	imgSearchSelect.setImage(image);
-	            	imgSearchSelect.setVisible(true);
-					return true;
-				}
-				return true;
-
-			}
-    		
-    	};
-    }*/
     
 }
 

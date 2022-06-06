@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -46,17 +47,17 @@
             </AnchorPane>
             <AnchorPane prefHeight="698.0" prefWidth="1024.0" style="-fx-background-color: #e8eaf6;">
                <children>
-                  <Text layoutX="34.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seleccione el archivo JAR a tracear" wrappingWidth="341.0708312988281">
+                  <Text layoutX="24.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seleccione el archivo JAR a tracear" wrappingWidth="277.0708312988281">
                      <font>
-                        <Font size="22.0" />
+                        <Font size="18.0" />
                      </font>
                   </Text>
-                  <Label fx:id="fileLabel" alignment="CENTER" layoutX="422.0" layoutY="55.0" prefHeight="32.0" prefWidth="572.0" style="-fx-background-color: #c5cae9;" textAlignment="CENTER">
+                  <Label fx:id="fileLabel" alignment="CENTER" layoutX="354.0" layoutY="55.0" prefHeight="32.0" prefWidth="642.0" style="-fx-background-color: #c5cae9;" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <ImageView fx:id="btnUpload" fitHeight="32.0" fitWidth="32.0" layoutX="380.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="btnUpload" fitHeight="32.0" fitWidth="32.0" layoutX="312.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@/images/upload.png" />
                      </image>
@@ -69,11 +70,6 @@
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <ScrollPane fx:id="txtOutput" layoutX="36.0" layoutY="293.0" prefHeight="363.0" prefWidth="958.0">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-                    </content>
-                  </ScrollPane>
                   <Label fx:id="btnEjecutar" alignment="CENTER" layoutX="820.0" layoutY="240.0" prefHeight="32.0" prefWidth="173.0" style="-fx-background-color: #c5cae9;" text="Ejecutar" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold" size="18.0" />
@@ -82,6 +78,22 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
+                  <TextArea fx:id="txtOutput" layoutX="25.0" layoutY="295.0" prefHeight="358.0" prefWidth="971.0" />
+                  <CheckBox layoutX="45.0" layoutY="127.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="161.0" text="Tiempo Ejecución">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox layoutX="45.0" layoutY="169.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="308.0" text="Métodos con argumentos">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox layoutX="45.0" layoutY="212.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="308.0" text="Métodos">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </CheckBox>
                </children>
             </AnchorPane>
          </children>
