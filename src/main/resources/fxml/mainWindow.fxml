@@ -94,6 +94,14 @@
                         <Font size="16.0" />
                      </font>
                   </CheckBox>
+                  <ImageView fx:id="btnClearOutPut" fitHeight="32.0" fitWidth="32.0" layoutX="773.0" layoutY="241.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@/images/delete.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
                </children>
             </AnchorPane>
          </children>

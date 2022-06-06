@@ -59,6 +59,7 @@ public class mainWindowController extends Application implements Initializable {
     @FXML private ImageView btnClose;
     @FXML private ImageView btnMinimize;
     @FXML private ImageView btnUpload;
+    @FXML private ImageView btnClearOutPut;
     @FXML private AnchorPane topWindow;
     @FXML private Label errorLabel;
     @FXML private Label fileLabel;
@@ -142,7 +143,6 @@ public class mainWindowController extends Application implements Initializable {
 			
 		}
 		
-		System.out.println(sb.toString());
 		txtOutput.setEditable(false);
 		txtOutput.setText(sb.toString());
 		
@@ -201,18 +201,6 @@ public class mainWindowController extends Application implements Initializable {
 		     }
 		});
 		
-		btnUpload.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-
-		     @Override
-		     public void handle(MouseEvent event) {
-		    	 
-		    	 File file = fileChooser.showOpenDialog(pStage);
-                if (file != null) {
-               	 fileLabel.setText(file.toString());                 
-                }               
-		     }
-		});
-		
 		btnEjecutar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
 		     @Override
@@ -223,6 +211,16 @@ public class mainWindowController extends Application implements Initializable {
 		    	 }
 		    	 
                              
+		     }
+		});
+		
+		btnClearOutPut.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+		     @Override
+		     public void handle(MouseEvent event) {
+		    	 
+		    	 txtOutput.setText("");   	 
+                            
 		     }
 		});
 		
