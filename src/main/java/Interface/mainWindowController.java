@@ -2,20 +2,28 @@ package Interface;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+
+import org.aspectj.weaver.loadtime.WeavingURLClassLoader;
+
+import com.cs.tesis.trace.Main;
 
 //import org.jsoup.Connection;
 //import org.jsoup.Jsoup;
@@ -88,9 +96,6 @@ public class mainWindowController extends Application implements Initializable {
     	pStage = primaryStage; 
 	}
     
-    
-    
-    
 	@Override
 	public void start(Stage secondStage) throws Exception {
 		
@@ -122,23 +127,65 @@ public class mainWindowController extends Application implements Initializable {
 
 		StringBuffer sb = new StringBuffer();
 		try {
-			//java -javaagent:JavaAgent-1.0-SNAPSHOT-jar-with-dependencies.jar -jar Ejecutable.jar
-	        ProcessBuilder builder = new ProcessBuilder(
-	        		"java", 
-	        		"-javaagent:C:\\Users\\Joaco\\Desktop\\Tesis\\Agente-Tesis\\target\\JavaAgent-1.0-SNAPSHOT-jar-with-dependencies.jar", 
-	        		"-jar", 
-	        		"C:\\Users\\Joaco\\Desktop\\Tesis\\Agente-Tesis\\Ejecutable.jar");
-	        builder.redirectErrorStream(true);
-	        Process p = builder.start();
-	        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        String line;
-	        
-	        while (true) {
-	            line = r.readLine();
-	            if (line == null) { break; }
-	            sb.append(line + System.lineSeparator());
-	        }
+			
+			if (fileLabel.getText() != null) {
+					
+				//java -javaagent:JavaAgent-1.0-SNAPSHOT-jar-with-dependencies.jar -jar Ejecutable.jar
+		        /*ProcessBuilder builder = new ProcessBuilder(
+		        		"java", 
+		        		"-javaagent:C:\\Users\\Joaco\\Desktop\\Tesis\\Agente-Tesis\\target\\JavaAgent-1.0-SNAPSHOT-jar-with-dependencies.jar", 
+		        		"-jar", 
+		        		"C:\\Users\\Joaco\\Desktop\\Tesis\\Agente-Tesis\\Ejecutable.jar");
+		        builder.redirectErrorStream(true);
+		        Process p = builder.start();*/
+		        
+		        
+		        File file = new File(fileLabel.getText());
+				String [] args = new String[1];
+		        JarInputStream jarInputStream = new JarInputStream(new FileInputStream(file));
+		
+		        Attributes mainAttributes = jarInputStream.getManifest().getMainAttributes();
+		        String mainClass = mainAttributes.getValue("Main-Class");
+		
+		//        Trie<String> packages = new Trie<>("All packages");
+		
+		      /*  JarEntry jarEntry;
+		        while ((jarEntry = jarInputStream.getNextJarEntry()) != null) {
+		            String className = jarEntry.getName();
+		            if (className.endsWith(".class")) {
+		                List<String> path = Arrays.asList(jarEntry.getName().split("/"));
+		               // packages.add(path);
+		            }
+		        }*/
+		        
+				URL appUrl = file.toURI().toURL();
+				
+		        URL aspectsUrl = Main.class.getProtectionDomain().getCodeSource().getLocation();
+		        URL[] classURLs = new URL[]{appUrl, aspectsUrl};
+		        URL[] aspectURLs = new URL[]{aspectsUrl};
+		        
+		        ClassLoader defaultClassLoader = Thread.currentThread().getContextClassLoader();
+		        ClassLoader weavingClassLoader = new WeavingURLClassLoader(classURLs, aspectURLs, defaultClassLoader);
+		        Thread.currentThread().setContextClassLoader(weavingClassLoader);
+		
+		        Class<?> app = weavingClassLoader.loadClass(mainClass);
+		        Method run = app.getMethod("main", String[].class);
+		        run.invoke(null, (Object) args);
+		        
+		        
+		        Thread.currentThread().setContextClassLoader(defaultClassLoader);
+		        
+		        
+		        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		        String line;
+		        
+		        while (true) {
+		            line = r.readLine();
+		            if (line == null) { break; }
+		            sb.append(line + System.lineSeparator());
+		        }
 			}
+		}
 		catch(Exception ex) {
 			
 		}
